@@ -123,17 +123,17 @@ while (true)
     else
         poseDiff = homMatrix * desiredInvert
         trplot(plotHandle,poseDiff);
-        currentEndEffector = dobot.GetEndEffectorPosition();
+        %currentEndEffector = dobot.GetEndEffectorPosition();
 
-        x = currentEndEffector(1) + poseDiff(1,4); 
-        y = currentEndEffector(2) + poseDiff(2,4); 
-        z = currentEndEffector(3) + poseDiff(3,4); 
+        %x = currentEndEffector(1) + poseDiff(1,4); 
+        %y = currentEndEffector(2) + poseDiff(2,4); 
+        %z = currentEndEffector(3) + poseDiff(3,4); 
     
-        newPose = [x; y; z]
+        %newPose = [x; y; z]
         
-        dobot.MoveToCartesianPoint(newPose);
+        %dobot.MoveToCartesianPoint(newPose);
         
-        pause(0.2);
+        %pause(0.2);
     end
     
 end
