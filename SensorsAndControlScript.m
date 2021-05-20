@@ -37,9 +37,13 @@ dobot = DobotControl();
 dobot.HomeDobot();
 
 %% Open Gripper 
+
+%used for holding the camera
 dobot.OpenGripperDobot();
 
 %% Close Gripper
+
+%used for holding the camera
 dobot.CloseGripperDobot();
 
 %% Get end effector
@@ -125,14 +129,20 @@ plotHandle = trplot(eye(4));
 hold on;
 desiredTagPose = eye(4);
 while (true)
+    
+    %recieve tag data
     tagMsg = receive(ARTagSub);
     numTags = size(tagMsg.Poses);
+    
+    %loop to inform us if there are no tags visible
     while numTags(1) < 1
         pause(1);
         tagMsg = receive(ARTagSub);
         numTags = size(tagMsg.Poses);
         disp("no visible tags");
     end
+    
+    %convert tag pose to transform
     currentPose = tagMsg.Poses(1);
     currentPosition = currentPose.Position;
     currentOrientation = currentPose.Orientation;
@@ -146,23 +156,33 @@ while (true)
     
     %below calculates the difference between the current camera pose and
     %the desired camera pose
-    %trplot(plotHandle,homMatrix);
+
+    %first part of if statement stores the transform the first time the
+    %camera sees the tag and uses that as the desired pose for comparison
     if desiredTagPose == eye(4)
         desiredTagPose = homMatrix;
         desiredInvert = HomInvert(desiredTagPose);
     else
+        
+        %calculate the error and plot for visualisation
         poseDiff = homMatrix * desiredInvert
         trplot(plotHandle,poseDiff);
+        
+        %gets the current end effector pose
         currentEndEffector = dobot.GetEndEffectorPosition();
 
         x = currentEndEffector(1) + poseDiff(1,4); 
         y = currentEndEffector(2) + poseDiff(2,4); 
         z = currentEndEffector(3) + poseDiff(3,4); 
     
+        %format so that the robot can read it
         newPose = [x; y; z]
         
+        %move the robot to the new pose 
         dobot.MoveToCartesianPoint(newPose);
         
+        %the dobot requires a small delay so that it can process the
+        %commands
         pause(0.2);
     end
     
@@ -173,7 +193,7 @@ end
 
 
 
-%% Robot control using just cartesian points 
+%% 4. Robot control using just cartesian points 
 
 %Control of the robot using just the x, y, z pose of the tag and the cartesian
 %control function in the dobot driver
@@ -194,8 +214,12 @@ iterator = 0;
 
 
 while (true)
+    
+    %recieve the tag pose
     tagMsg = receive(ARTagSub);
     numTags = size(tagMsg.Poses);
+    
+    %inform us if no visible tags
     while numTags(1) < 1
         pause(1);
         tagMsg = receive(ARTagSub);
@@ -206,12 +230,19 @@ while (true)
     currentPosition = currentPose.Position;
 
     if iterator < 1
+        
+        %desired tag pose is stored on the first run of the loop
         startX = currentPosition.X;
         startY = currentPosition.Y;
         startZ = currentPosition.Z;  
+        
     else
+        
+        %get end effector pose
         currentEndEffector = dobot.GetEndEffectorPosition();
         
+        %below calculates the error in the x, y and z directions separately
+        %and then creates the new pose for the robot to move to
         xDiff = currentPosition.X - startX;
         yDiff = currentPosition.Y - startY;
         zDiff = currentPosition.Z - startZ;
@@ -227,7 +258,7 @@ while (true)
         pause(0.2);
     end
     
-     iterator = iterator + 1;
+     iterator = iterator + 1; %increment iterator for tracking the loop iterations
     
 end
 
