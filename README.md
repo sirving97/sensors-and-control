@@ -28,13 +28,13 @@ This file is the modified launch file for the ar track toolbox. This file is cal
 
 # DobotControl.m
 
-This class has been created as an addition to the dobot magician class to make the control functions easier to understand and more intuitive to access. This class was created with the help of my robotics group including Conner Eyles and Josh Poot for our assignment in 41013 Robotics this semester. 
+This class has been created as an addition to the dobot magician class to make the control functions easier to understand and more intuitive to access. This class was created with the help of my robotics group including Connor Eyles and Josh Poot for our assignment in 41013 Robotics this semester. 
 
 
 
 # DobotSimulation.m
 
-This class is used for simulating the dobot robot and practicing the robot's movements in MATLAB. It includes custom fkine and ikine functions that better match the joint restraints of the dobot. This class was also created for my robotics assignment this semester with the help of Josh Poot and Conner Eyles. 
+This class is used for simulating the dobot robot and practicing the robot's movements in MATLAB. It includes custom fkine and ikine functions that better match the joint restraints of the dobot. This class was also created for my robotics assignment this semester with the help of Josh Poot and Connor Eyles. 
 
 
 
