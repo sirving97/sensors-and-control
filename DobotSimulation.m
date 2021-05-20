@@ -17,22 +17,21 @@ classdef DobotSimulation < handle
            function self = DobotSimulation()
                %initialising the simulation
                self.getDobot();
-               q = zeros(1,5);
-               plot(self.model,q);
+               q = zeros(1, 4);
+               plot(self.model, q);
            end
            
            %% Get Dobot Parameters and create seriallink
-           function getDobot(Static)
+           function getDobot(self)
                
-               name = getstr(now, 'yyyy');
+               L(1) = Revolute('d', 0, 'a', 0, 'alpha', -pi/2);
+               L(2) = Revolute('d', 0, 'a', 0.135, 'alpha', 0, 'offset', -pi/2);
+               L(3) = Revolute('d', 0, 'a', 0.147,'alpha',pi/2, 'offset', pi/2);
+               L(4) = Revolute('d', 0, 'a', 0,'alpha',0);
+
+               self.model = SerialLink(L, 'name', 'dobot magician');
                
-               L1 = Link('d',0,'a',0.057,'alpha',0,'offset',0,'qlim',[deg2rad(-135),deg2rad(135)]);
-               L2 = Link('d',0,'a',0.135,'alpha',0,'offset',-pi/2,'qlim',[deg2rad(5),deg2rad(80)]);
-               L3 = Link('d',0,'a',0.147,'alpha',0,'offset',0,'qlim',[deg2rad(15),deg2rad(170)]);
-               L4 = Link('d',0,'a',0,'alpha',0,'offset',-pi/2,'qlim',[pi/2,pi/2]);
-               L5 = Link('d',0,'a',0,'alpha',0,'offset',-pi/2,'qlim',[deg2rad(-85),deg2rad(85)]);
-               
-               self.model = SerialLink([L1 L2 L3 L4 L5], 'name', name);
+               dobot.qlim = [-pi/2 pi/2; 0 85*pi/180; -10*pi/180 95*pi/180;-pi/2 pi/2];
            end
            
            %% Dobot Fkine

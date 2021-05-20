@@ -1,15 +1,39 @@
 %% Sensors and Control Script
+
+%This is the main script for performing the hand eye calibration of the
+%dobot robot and running the control loop to make the robot follow the ar
+%tag. 
+
+% The sections have been numbered to show the order that they should be
+% run. There are still a lot of sections that have been kept in the code
+% and used for debugging etc. You only need to run the numbered sections in
+% order to make the dobot follow an ar tag. Make sure you have all of the
+% required rose nodes and topics running in the background.
 clear all;
 clc;
 
+%% Simulating the dobot in matlab
 
-%% Initialise ROS
+%creates and object of the dobotSimulation class to model a simulated dobot
+%in matlab. This part was only used for visulaising the dobot motion and
+%understainding the control better
+
+clc;
+clf;
+
+dobot = DobotSimulation();
+
+
+%% 1. Initialise ROS
 rosinit
 
-%% initialise robot
+%% 2. Initialise robot
 dobot = DobotControl();
 
 %% Dobot initialise
+
+%Returns the dobot to its home position. Not necessary to run everytime but
+%a good starting point for the tag following. 
 dobot.HomeDobot();
 
 %% Open Gripper 
@@ -26,11 +50,15 @@ pose = [0.1402; 0; 0];
 dobot.MoveToCartesianPoint(pose);
 
 
-%% Hand eye calibration 
+%% 3. Hand eye calibration 
 
 %This part of the code finds the transform between the camera and the dobot
 %end effector by looking at an ar tag with a known transform from the robot
 %base.
+
+%Due to the fact that the realsense camera is pre-calibrated from the
+%factory, this is not necessary to run for the ar tag following but useful
+%for any other applications where the gripper-camera transform is needed
 
 %get ar tag information from ar_track_alvar_msgs/AlvarMarkers
 ARTagSub = rossubscriber('/tags','geometry_msgs/PoseArray');
@@ -87,6 +115,8 @@ tr_EEF2Camera(3,4) = diffZ;
 
 %This method controls the robot by computing the difference in the
 %transform between the current tag pose and the desired tag pose.
+
+%this is option 1 of 2 for controlling the dobot
 clc;
 
 %get ar tag information from ar_track_alvar_msgs/AlvarMarkers
@@ -204,7 +234,7 @@ end
 
 
 
-%% Functions
+%% Other Functions
 
 %Function to invert a homogeneous transform
 function result = HomInvert(transform)
